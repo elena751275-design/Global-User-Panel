@@ -165,16 +165,33 @@
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid hsl(220 30% 80% / 0.08);
 }
+
 .gold-text {
   background: var(--gradient-gold);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  font-weight: 700;
 }
+
 .vip-badge {
   background: var(--gradient-gold);
   color: hsl(224 30% 10%);
   box-shadow: var(--shadow-glow-gold);
   font-weight: 700;
   letter-spacing: 0.04em;
+  @apply px-2.5 py-1 rounded-md text-[10px] uppercase;
+}
+
+/* Design System Utilities */
+.card-standard {
+  @apply rounded-2xl bg-card border border-border shadow-[var(--shadow-tile)] p-4;
+}
+
+.stat-display {
+  @apply text-2xl font-extrabold tracking-tight text-foreground;
+}
+
+.stat-label {
+  @apply text-[11px] uppercase tracking-[0.2em] text-muted-foreground;
 }
