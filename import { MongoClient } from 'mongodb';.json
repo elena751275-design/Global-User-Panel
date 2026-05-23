@@ -1,0 +1,47 @@
+import { MongoClient } from 'mongodb';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// .env ফাইল থেকে ভেরিয়েবল লোড করি
+dotenv.config({ path: path.join(process.cwd(), '.env') });
+
+const uri = process.env.MONGODB_URI;
+
+if (!uri) {
+  console.error("❌ MONGODB_URI is not defined in your .env file.");
+  process.exit(1);
+}
+
+// একটি নতুন MongoClient তৈরি করি
+const client = new MongoClient(uri);
+
+async function run() {
+  try {
+    // ডাটাবেজের সাথে সংযোগ স্থাপন করি
+    console.log("⏳ Connecting to MongoDB Atlas...");
+    await client.connect();
+    console.log("✅ Successfully connected to MongoDB Atlas!");
+
+    // ডাটাবেজ এবং কালেকশন নির্দিষ্ট করি
+    const database = client.db("GlobalMarketplace"); // আপনার ডাটাবেজের নাম দিন
+    const collection = database.collection("users"); // যেকোনো একটি কালেকশনের নাম দিন
+
+    // একটি ডকুমেন্ট খুঁজে বের করার চেষ্টা করি
+    const user = await collection.findOne();
+    if (user) {
+      console.log("📄 Found a document:", user);
+    } else {
+      console.log("📄 No documents found in the collection.");
+    }
+
+  } catch (err) {
+    console.error("❌ Connection failed:", err);
+  } finally {
+    // সংযোগ বন্ধ করি
+    await client.close();
+    console.log("👋 Connection closed.");
+  }
+}
+
+run();
+"mongodb": "3.6",
