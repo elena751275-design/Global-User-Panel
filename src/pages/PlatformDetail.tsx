@@ -38,12 +38,10 @@ const PlatformDetail = () => {
   const products = productsByPlatform[platform || ""] || [];
   const dailyRemaining = Math.max(0, MAX_DAILY - dailyOrderCount);
 
-  // Fetch order status (balance + daily count) from backend on mount
   useEffect(() => {
     const userId = user?._id || user?.id;
     if (!userId) return;
 
-    // Show localStorage cache immediately
     const cachedBalance = localStorage.getItem('user-balance');
     const cachedCount = localStorage.getItem('daily-order-count');
     if (cachedBalance) setAccountBalance(Number(cachedBalance));
@@ -65,28 +63,23 @@ const PlatformDetail = () => {
   }, [user]);
 
   const grabOrder = async () => {
-    // Global daily limit
     if (dailyOrderCount >= MAX_DAILY) {
       toast({ title: "Daily Limit Reached", description: "You have completed your daily limit of 25 orders.", variant: "destructive" });
       return;
     }
 
-    // Check for combo order + incomplete order
     const nextOrderNum = dailyOrderCount + 1;
     const userId2 = user?._id || user?.id;
     if (userId2) {
       try {
-        // First check: any existing incomplete combo order?
         const incRes = await fetch(`http://localhost:5001/api/combo/incomplete/${userId2}`);
         const incData = await incRes.json();
         if (incData.success && incData.hasIncomplete) {
           setPendingCombo(incData.order);
-          // Always show popup for incomplete combos
           setComboPopup(true);
           return;
         }
 
-        // Second check: combo match at this sequence
         const checkRes = await fetch(`http://localhost:5001/api/combo/check/${userId2}/${nextOrderNum}`);
         const checkData = await checkRes.json();
         if (checkData.success && checkData.matched) {
@@ -95,14 +88,12 @@ const PlatformDetail = () => {
             setComboPopup(true);
             return;
           }
-          // Create incomplete order and redirect
           navigate(`/record?tab=incomplete&orderNum=${nextOrderNum}`);
           return;
         }
       } catch (e) { /* continue */ }
     }
 
-    // Balance check per platform
     const bal = accountBalance;
     if (bal < config.minBalance) {
       toast({
@@ -135,14 +126,12 @@ const PlatformDetail = () => {
     const newBalance = accountBalance + commission;
     const newCount = dailyOrderCount + 1;
 
-    // Update local state immediately
     setAccountBalance(newBalance);
     setDailyOrderCount(newCount);
     setTotalCommission(prev => prev + commission);
     localStorage.setItem('user-balance', String(newBalance));
     localStorage.setItem('daily-order-count', String(newCount));
 
-    // Persist to backend
     const userId = user?._id || user?.id;
     if (userId) {
       fetch('http://localhost:5001/api/profile/complete-order', {
@@ -170,32 +159,33 @@ const PlatformDetail = () => {
       <div className="px-5 pt-4">
         <Card className="bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
           <CardContent className="p-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Account Balance</p>
-            <p className="text-2xl font-extrabold mt-1 gold-text">{accountBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-sm font-medium text-muted-foreground">USDT</span></p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Account Balance</p>
+            <p className="text-3xl font-extrabold mt-2 gold-text">{accountBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            <p className="text-xs font-medium text-muted-foreground mt-1">USDT</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Stats Card */}
+      {/* Stats Card - IMPROVED GRID */}
       <div className="px-5 mt-4">
         <Card className="bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
           <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="border-b border-r border-border pb-3">
-                <p className="text-lg font-bold text-foreground">{dailyOrderCount}</p>
-                <p className="text-xs text-muted-foreground">Today's Orders</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="border-b border-r border-border pb-4 pr-4">
+                <p className="text-2xl font-bold text-foreground text-center">{dailyOrderCount}</p>
+                <p className="text-xs text-muted-foreground text-center mt-2 font-medium">Today's Orders</p>
               </div>
-              <div className="border-b border-border pb-3">
-                <p className="text-lg font-bold gold-text">{totalCommission.toFixed(2)} USDT</p>
-                <p className="text-xs text-muted-foreground">Today's commission</p>
+              <div className="border-b border-border pb-4">
+                <p className="text-2xl font-bold gold-text text-center">{totalCommission.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground text-center mt-2 font-medium">Commission</p>
               </div>
-              <div className="border-r border-border pb-1">
-                <p className="text-lg font-bold text-foreground">{dailyRemaining}</p>
-                <p className="text-xs text-muted-foreground">Remaining Today</p>
+              <div className="border-r border-border pr-4 pt-2">
+                <p className="text-2xl font-bold text-foreground text-center">{dailyRemaining}</p>
+                <p className="text-xs text-muted-foreground text-center mt-2 font-medium">Remaining</p>
               </div>
-              <div className="pb-1">
-                <p className="text-lg font-bold text-foreground">{config.commission}%</p>
-                <p className="text-xs text-muted-foreground">Commission Rate</p>
+              <div className="pt-2">
+                <p className="text-2xl font-bold text-foreground text-center">{config.commission}%</p>
+                <p className="text-xs text-muted-foreground text-center mt-2 font-medium">Commission</p>
               </div>
             </div>
           </CardContent>
@@ -206,7 +196,7 @@ const PlatformDetail = () => {
       <div className="px-8 mt-8">
         <Button
           onClick={grabOrder}
-          className="w-full h-14 rounded-full text-lg font-bold bg-primary text-primary-foreground hover:opacity-90 shadow-[var(--shadow-glow-violet)]"
+          className="w-full h-14 rounded-full text-lg font-bold bg-primary text-primary-foreground hover:opacity-90 shadow-[var(--shadow-glow-violet)] transition-all"
           disabled={dailyOrderCount >= MAX_DAILY || !initialized}
         >
           {dailyOrderCount >= MAX_DAILY ? "Daily Limit Reached" : initialized ? "Grab the order immediately" : "Loading..."}
@@ -214,27 +204,23 @@ const PlatformDetail = () => {
       </div>
 
       {/* Global Progress */}
-      <div className="px-8 mt-4 text-center">
-        <p className="text-sm text-muted-foreground">
-          Completed: <span className="font-bold text-accent">{dailyOrderCount}</span> / {MAX_DAILY} orders today
+      <div className="px-8 mt-4 text-center space-y-1">
+        <p className="text-sm font-medium text-muted-foreground">
+          Completed: <span className="font-bold text-accent">{dailyOrderCount}</span> / {MAX_DAILY} orders
         </p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Balance Range: {config.rangeLabel} USDT | Commission: {config.commission}%
+        <p className="text-xs text-muted-foreground">
+          Range: {config.rangeLabel} USDT | Commission: {config.commission}%
         </p>
       </div>
 
       {/* Hints */}
       <div className="px-5 mt-6">
-        <p className="text-sm text-muted-foreground font-medium">Hint:</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          1: {config.commission}% commission on completed transactions.
-        </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          2: Complete orders as soon as possible after matching to avoid delays.
-        </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          3: Daily limit of {MAX_DAILY} orders shared across all platforms.
-        </p>
+        <p className="text-sm font-semibold text-muted-foreground mb-3">💡 Tips:</p>
+        <div className="space-y-1.5">
+          <p className="text-xs text-muted-foreground">1: {config.commission}% commission on completed transactions</p>
+          <p className="text-xs text-muted-foreground">2: Complete orders as soon as possible to avoid delays</p>
+          <p className="text-xs text-muted-foreground">3: Daily limit of {MAX_DAILY} orders across all platforms</p>
+        </div>
       </div>
 
       {/* Product Dialog */}
@@ -250,11 +236,11 @@ const PlatformDetail = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">{currentProduct.name}</h3>
-                <div className="flex justify-between items-center mt-2">
+                <div className="flex justify-between items-center mt-3">
                   <span className="text-sm text-muted-foreground">Price</span>
                   <span className="font-bold">${currentProduct.price.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center mt-1">
+                <div className="flex justify-between items-center mt-2">
                   <span className="text-sm text-muted-foreground">Commission</span>
                   <span className="font-bold gold-text">+${currentProduct.commission.toFixed(2)}</span>
                 </div>
@@ -263,9 +249,7 @@ const PlatformDetail = () => {
                 <div className="flex flex-col items-center gap-2 py-4">
                   <CheckCircle className="h-12 w-12 text-success" />
                   <p className="font-bold text-success">Order Completed!</p>
-                  <p className="text-sm text-muted-foreground">
-                    Commission +${currentProduct.commission.toFixed(2)} added
-                  </p>
+                  <p className="text-sm text-muted-foreground">+${currentProduct.commission.toFixed(2)} earned</p>
                 </div>
               ) : (
                 <Button onClick={submitOrder} className="w-full h-12 rounded-full text-base font-bold bg-primary text-primary-foreground hover:opacity-90 shadow-[var(--shadow-glow-violet)]">
@@ -277,19 +261,19 @@ const PlatformDetail = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Combo Order Restriction Popup */}
+      {/* Combo Order Popup */}
       {comboPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center">
-            <p className="text-lg font-bold text-foreground mb-2">⚠️ Incomplete Combo Order</p>
-            <p className="text-sm text-muted-foreground mb-4">
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center space-y-4">
+            <p className="text-lg font-bold text-foreground">⚠️ Incomplete Combo</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {pendingCombo && (Number(accountBalance || 0)) < (Number(pendingCombo.rechargeShortage) || 0)
-                ? <>Your account balance is not enough, you need to recharge <span className="font-bold text-accent">${pendingCombo.rechargeShortage?.toFixed(2)}</span> to submit this order</>
-                : <>You have an incomplete combo order at task #{pendingCombo?.comboOrderNumber || pendingCombo?.orderNumber}. Complete it in your Record page.</>
+                ? <>Balance insufficient. Recharge <span className="font-bold text-accent">${pendingCombo.rechargeShortage?.toFixed(2)}</span> to submit</>
+                : <>Complete your pending combo order</>
               }
             </p>
             <button onClick={() => { setComboPopup(false); navigate('/record?tab=incomplete'); }}
-              className="w-full rounded-xl bg-primary text-primary-foreground py-2.5 text-sm font-semibold">
+              className="w-full rounded-lg bg-primary text-primary-foreground py-3 text-sm font-semibold hover:opacity-90 transition-opacity">
               Go to Incomplete Orders
             </button>
           </div>
