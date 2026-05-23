@@ -130,28 +130,29 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Real Balance Display */}
+      {/* Real Balance Display - IMPROVED */}
       <div className="px-4 -mt-2 relative z-10">
-        <div className="rounded-2xl glass p-4 flex items-center justify-between">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Balance</p>
-            <p className="mt-1 gold-text text-3xl font-extrabold tracking-tight">
-              {balance.toFixed(2)} <span className="text-xs font-medium text-muted-foreground">USDT</span>
+        <div className="rounded-2xl glass p-4 flex items-center justify-between gap-4">
+          <div className="flex-1">
+            <p className="stat-label">Balance</p>
+            <p className="mt-2 gold-text text-4xl font-extrabold tracking-tight">
+              {balance.toFixed(2)}
             </p>
+            <p className="text-xs font-medium text-muted-foreground mt-1">USDT</p>
           </div>
-          <Wallet className="h-8 w-8 text-accent opacity-50" strokeWidth={1.5} />
+          <Wallet className="h-12 w-12 text-accent opacity-40 flex-shrink-0" strokeWidth={1.5} />
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="px-4 -mt-3 relative z-10">
-        <div className="grid grid-cols-4 gap-2.5 rounded-2xl glass p-3">
+      {/* Quick Actions - UNIFIED */}
+      <div className="px-4 mt-4 relative z-10">
+        <div className="grid grid-cols-4 gap-3 rounded-2xl glass p-4">
           {quickActions.map((item) => (
-            <button key={item.label} className="flex flex-col items-center gap-2 group">
-              <div className="h-12 w-12 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center group-hover:bg-primary/25 transition-colors shadow-[0_0_18px_-8px_hsl(var(--primary)/0.6)]">
+            <button key={item.label} className="flex flex-col items-center gap-2.5 group">
+              <div className="h-14 w-14 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center group-hover:bg-primary/25 transition-colors shadow-[0_0_18px_-8px_hsl(var(--primary)/0.3)]">
                 <item.icon className="h-6 w-6 text-accent" strokeWidth={1.6} fill="hsl(var(--primary) / 0.3)" />
               </div>
-              <span className="text-xs text-foreground font-medium">{item.label}</span>
+              <span className="text-xs font-semibold text-foreground text-center leading-tight">{item.label}</span>
             </button>
           ))}
         </div>
@@ -167,61 +168,63 @@ const Index = () => {
                 isAnimating ? "opacity-0 -translate-y-3" : "opacity-100 translate-y-0"
               }`}
             >
-              <div className="text-accent">
+              <div className="text-accent flex-shrink-0">
                 <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="8" r="4" />
                   <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
                   <line x1="2" y1="12" x2="6" y2="12" />
                 </svg>
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">{current.user}</p>
-                <p className="text-xs text-success">withdrawal successful</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">{current.user}</p>
+                <p className="text-xs text-success font-medium">withdrawal successful</p>
               </div>
-              <p className="text-sm font-semibold gold-text">{current.amount.toFixed(2)} USDT</p>
+              <p className="text-sm font-bold gold-text flex-shrink-0">{current.amount.toFixed(2)}</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Platform Introduction */}
-      <div className="px-4 mt-5">
-        <h2 className="text-base font-bold text-foreground mb-3">Platform introduction</h2>
-        <div className="grid grid-cols-2 gap-3">
+      {/* Platform Introduction - CONSISTENT */}
+      <div className="px-4 mt-6">
+        <h2 className="text-base font-bold text-foreground mb-4">Platform introduction</h2>
+        <div className="grid grid-cols-2 gap-4">
           {platformItems.map((item) => (
-            <Card key={item.title} className="overflow-hidden border border-border bg-card rounded-2xl shadow-[var(--shadow-tile)] hover:border-[#B8860B]/40 hover:shadow-[0_0_15px_-3px_rgba(184,134,11,0.3)] transition-all relative">
+            <Card key={item.title} className="overflow-hidden border border-border bg-card rounded-2xl shadow-[var(--shadow-tile)] hover:border-primary/40 hover:shadow-[0_0_15px_-3px_rgba(184,134,11,0.2)] transition-all cursor-pointer">
               <Globe className="absolute -right-2 -bottom-2 h-12 w-12 text-[#B8860B] opacity-[0.05] pointer-events-none" />
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-28 object-cover grayscale-[40%] contrast-110"
-                loading="lazy"
-              />
+              <div className="aspect-video w-full overflow-hidden bg-secondary relative">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover grayscale-[40%] contrast-110"
+                  loading="lazy"
+                />
+              </div>
               <CardContent className="p-3">
-                <p className="text-sm font-semibold text-foreground">{item.title}</p>
-                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.desc}</p>
+                <p className="text-sm font-semibold text-foreground leading-tight">{item.title}</p>
+                <p className="text-xs text-muted-foreground mt-2 line-clamp-2 leading-relaxed">{item.desc}</p>
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
 
-      {/* Trusted Partners */}
-      <div className="px-4 mt-6">
-        <h2 className="text-base font-bold text-foreground mb-3 uppercase tracking-wide">
-          Our Trusted Global Partners & Affiliates
+      {/* Trusted Partners - UNIFORM */}
+      <div className="px-4 mt-6 pb-4">
+        <h2 className="text-base font-bold text-foreground mb-4 uppercase tracking-wide">
+          Our Trusted Global Partners
         </h2>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2">
+        <div className="grid grid-cols-4 gap-2.5">
           {partners.map((partner) => (
             <div
               key={partner.name}
-              className="aspect-square bg-card border border-border rounded-2xl flex items-center justify-center p-2 shadow-[var(--shadow-tile)] hover:border-primary/40 transition-all"
+              className="aspect-square bg-card border border-border rounded-xl flex items-center justify-center p-2.5 shadow-[var(--shadow-tile)] hover:border-primary/40 transition-all"
             >
               <img
                 src={partner.logo}
                 alt={`${partner.name} logo`}
-                width={80}
-                height={80}
+                width={64}
+                height={64}
                 loading="lazy"
                 className="max-h-full max-w-full object-contain"
               />
