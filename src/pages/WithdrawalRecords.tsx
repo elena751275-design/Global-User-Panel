@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import PageHeader from "@/components/PageHeader";
 import { toast } from "sonner";
@@ -52,24 +51,24 @@ const WithdrawalRecords = () => {
     fetchRecords();
   }, [user]);
 
-  return (
-    <div className="min-h-screen bg-background pb-10">
+return (
+    <div className="min-h-screen bg-goldBg pb-10">
       <PageHeader title="Withdrawal Records" />
       <div className="px-5 pt-5 space-y-3">
         {loading ? (
-          <p className="text-sm text-muted-foreground text-center py-8">Loading records...</p>
+          <p className="text-sm text-gray-400 text-center py-8">Loading records...</p>
         ) : records.length === 0 ? (
-          <Card className="p-8 text-center text-sm text-muted-foreground bg-card border border-border rounded-2xl">
+          <div className="luxury-card p-8 text-center text-sm text-gray-400">
             No withdrawal records yet.
-          </Card>
+          </div>
         ) : (
           <>{records.map((record) => (
-            <Card key={record._id} className="p-4 bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
+            <div key={record._id} className="luxury-card p-4">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="text-lg font-bold gold-text">
+                  <p className="text-lg font-bold gold-gradient-text">
                     {Number(record.amount).toFixed(2)}{" "}
-                    <span className="text-xs font-normal text-muted-foreground">USDT</span>
+                    <span className="text-xs font-normal text-gray-400">USDT</span>
                   </p>
                 </div>
                 <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${statusBadge[record.status] || statusBadge.pending}`}>
@@ -77,17 +76,17 @@ const WithdrawalRecords = () => {
                 </span>
               </div>
 
-              <div className="space-y-1 text-xs text-muted-foreground">
+              <div className="space-y-1 text-xs text-gray-400">
                 {record.walletName && (
                   <p className="flex items-center gap-1">
-                    <span className="text-foreground/60">Wallet:</span>
-                    <span className="font-medium text-foreground">{record.walletName}</span>
+                    <span className="text-gray-400/60">Wallet:</span>
+                    <span className="font-medium text-white">{record.walletName}</span>
                     {record.walletNetwork && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-accent">{record.walletNetwork}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-luxuryGold-main/10 text-luxuryGold-main">{record.walletNetwork}</span>
                     )}
                   </p>
                 )}
-                <p className="font-mono text-[11px] break-all">
+                <p className="font-mono text-[11px] break-all text-gray-400">
                   {record.walletAddress}
                 </p>
                 <p className="text-[10px]">
@@ -97,7 +96,7 @@ const WithdrawalRecords = () => {
                   })}
                 </p>
               </div>
-            </Card>
+            </div>
           ))}</>
         )}
       </div>

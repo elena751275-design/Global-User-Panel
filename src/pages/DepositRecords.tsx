@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 // import { supabase } from "@/integrations/supabase/client";
@@ -50,46 +49,46 @@ const DepositRecords = () => {
     fetchDeposits();
   }, [user]);
 
-  return (
-    <div className="min-h-screen bg-background pb-10">
+return (
+    <div className="min-h-screen bg-goldBg pb-10">
       <PageHeader title="Deposit Records" />
 
       <div className="px-5 pt-5 space-y-3">
         {loading ? (
-          <p className="text-sm text-muted-foreground">Loading...</p>
+          <p className="text-sm text-gray-400">Loading...</p>
         ) : rows.length === 0 ? (
-          <Card className="p-8 text-center text-sm text-muted-foreground bg-card border border-border rounded-2xl">
+          <div className="luxury-card p-8 text-center text-sm text-gray-400">
             No deposit records yet.
-          </Card>
+          </div>
         ) : (
           rows.map((r) => (
-            <Card key={r._id} className="p-4 bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
+            <div key={r._id} className="luxury-card p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-lg font-bold gold-text">
+                  <p className="text-lg font-bold gold-gradient-text">
                     {Number(r.amount).toFixed(2)}{" "}
-                    <span className="text-xs font-normal text-muted-foreground">USDT</span>
+                    <span className="text-xs font-normal text-gray-400">USDT</span>
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{r.network}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{r.network}</p>
                 </div>
                 <Badge variant="outline" className={statusStyle[r.status]}>
                   {r.status}
                 </Badge>
               </div>
               {r.tx_hash && (
-                <p className="text-[11px] text-muted-foreground mt-2 break-all">
+                <p className="text-[11px] text-gray-400 mt-2 break-all">
                   TX: {r.tx_hash}
                 </p>
               )}
-              <p className="text-[11px] text-muted-foreground mt-1">
+              <p className="text-[11px] text-gray-400 mt-1">
                 {new Date(r.createdAt).toLocaleString()}
               </p>
               {r.admin_note && (
-                <p className="text-xs mt-2 p-2 bg-secondary rounded-lg">
+                <p className="text-xs mt-2 p-2 bg-[#0f131e] rounded-lg text-gray-400">
                   Note: {r.admin_note}
                 </p>
               )}
-            </Card>
+            </div>
           ))
         )}
       </div>

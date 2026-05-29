@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mine · Global Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ═══════════════════════════════════════
+       RESET — no ghost containers
+       ═══════════════════════════════════════ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════
+       BODY — solid premium dark metallic
+       ═══════════════════════════════════════ */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #06090e;          /* per spec */
+      color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ═══════════════════════════════════════
+       CARD — single layer, no gradients
+       ═══════════════════════════════════════ */
+    .card {
+      background-color: #0c1017;          /* per spec — solid dark charcoal */
+      border: 1px solid #1a2230;          /* per spec — thin crisp border */
+      border-radius: 12px;                 /* per spec */
+      overflow: hidden;                    /* per spec */
+      width: 100%;
+    }
+
+    /* ═══════════════════════════════════════
+       UTILITY
+       ═══════════════════════════════════════ */
+    .page-wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding-bottom: 80px;               /* room for bottom nav */
+      min-height: 100vh;
+    }
+
+    /* ── GOLD GRADIENT TEXT ── */
+    .gold-text {
+      background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    /* ── GOLD 3D ICON (big — used in balance area) ── */
+    .icon-3d {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #1a1510, #0d0b08);
+      border: 1px solid #2C251E;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+      color: #BFA37A;
+      flex-shrink: 0;
+    }
+    .icon-3d svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ── GOLD 3D ICON (small — used in actions / menu) ── */
+    .icon-3d-sm {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(145deg, #1a1510, #0d0b08);
+      border: 1px solid #2C251E;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
+      color: #BFA37A;
+      flex-shrink: 0;
+    }
+    .icon-3d-sm svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ── GOLD BADGE ── */
+    .badge-gold {
+      background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
+      color: #000000;
+      font-weight: 700;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      box-shadow: 0 4px 14px rgba(245,158,11,0.2);
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    /* ── GOLD BUTTON ── */
+    .btn-gold {
+      background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
+      color: #000000;
+      font-weight: 700;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(245,158,11,0.2);
+      transition: opacity 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-gold:hover { opacity: 0.9; }
+    .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── INPUT style for dialog ── */
+    .inp {
+      background-color: #0a0d14;
+      border: 1px solid #1a1f2e;
+      border-radius: 12px;
+      color: #C29F74;
+      font-family: monospace;
+      text-align: center;
+      font-size: 18px;
+      letter-spacing: 0.1em;
+      padding: 10px 12px;
+      width: 100%;
+      outline: none;
+    }
+    .inp:focus { border-color: #C29F74; }
+
+    /* ── MODAL OVERLAY ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.hidden { display: none; }
+
+    .modal-box {
+      background-color: #0c1017;
+      border: 1px solid #1a2230;
+      border-radius: 16px;
+      max-width: 360px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    /* ═══════════════════════════════════════
+       BOTTOM NAV
+       ═══════════════════════════════════════ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 480px;
+      width: 100%;
+      background-color: #0c1017;
+      border-top: 1px solid #1a2230;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      z-index: 100;
+    }
+    .bottom-nav a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
+      font-size: 10px;
+      color: #8b949e;
+      padding: 4px 12px;
+      transition: color 0.2s;
+    }
+    .bottom-nav a.active { color: #C29F74; }
+    .bottom-nav a svg { width: 22px; height: 22px; }
+
+    /* ═══════════════════════════════════════
+       SCROLLBAR
+       ═══════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #1a2230; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap" id="app">
+
+  <!-- ════════════════════════════════════════
+       TOP HEADER — profile + balance card
+       ════════════════════════════════════════ -->
+  <div class="card" style="border-radius:0 0 12px 12px; border-top:none; padding:20px 16px 18px;">
+
+    <!-- ── Row 1: Avatar + Name + Mail Icon ── -->
+    <div style="display:flex; align-items:center; gap:14px;">
+      <!-- Avatar -->
+      <div style="position:relative; width:60px; height:60px; flex-shrink:0;">
+        <div style="width:60px; height:60px; border-radius:50%; overflow:hidden; border:2px solid #C29F74; box-shadow:0 0 18px -4px rgba(194,159,116,0.5);">
+          <div style="width:100%; height:100%; background:linear-gradient(135deg,#F0A500,#A67C00,#5C3D00); display:flex; align-items:center; justify-content:center; color:#000; font-weight:800; font-size:20px; letter-spacing:0.5px;">
+            EL
+          </div>
+        </div>
+        <!-- camera overlay -->
+        <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:3px 0; border-radius:0 0 60px 60px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+      </div>
+
+      <!-- Name + VIP + Invite Code -->
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <h1 style="font-size:18px; font-weight:700; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;">
+            Elena
+          </h1>
+          <span class="badge-gold">VIP 3</span>
+        </div>
+        <button id="copyCodeBtn" style="margin-top:4px; display:flex; align-items:center; gap:6px; font-size:12px; color:#8b949e; background:none; border:none; cursor:pointer; padding:0;">
+          <span>Invitation code: ELENA888</span>
+          <!-- Copy icon -->
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+
+      <!-- Mail icon -->
+      <button style="background:none; border:none; color:#C29F74; cursor:pointer; flex-shrink:0;" aria-label="Messages">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      </button>
+    </div>
+
+    <!-- ── Row 2: Balance Card (single card, no gradient) ── -->
+    <div style="margin-top:14px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:14px 16px; display:flex; align-items:flex-end; justify-content:space-between;">
+
+      <!-- Balance left -->
+      <div>
+        <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.22em; font-weight:600; color:#8b949e; margin-bottom:4px;">My Account Balance</p>
+        <p style="display:flex; align-items:baseline; gap:4px;">
+          <span class="gold-text" style="font-size:26px; font-weight:800;">12,845.75</span>
+          <span style="font-size:11px; font-weight:500; color:#8b949e;">USDT</span>
+        </p>
+      </div>
+
+      <!-- Deposit / Withdrawal icons right -->
+      <div style="display:flex; gap:12px;">
+        <button id="btnDeposit" style="display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; cursor:pointer; padding:0;">
+          <div class="icon-3d">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="7" width="20" height="13" rx="3" fill="currentColor" opacity="0.3" />
+              <rect x="2" y="5" width="14" height="4" rx="2" fill="currentColor" opacity="0.9" />
+              <circle cx="17" cy="13" r="2" fill="currentColor" />
+            </svg>
+          </div>
+          <span style="font-size:10px; color:#ffffff; font-weight:500; line-height:1.2;">Deposit</span>
+        </button>
+        <button id="btnWithdrawal" style="display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; cursor:pointer; padding:0;">
+          <div class="icon-3d">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="13" rx="3" fill="currentColor" opacity="0.25" stroke="none" />
+              <path d="M12 9 v7 m-3 -3 l3 3 l3 -3" />
+            </svg>
+          </div>
+          <span style="font-size:10px; color:#ffffff; font-weight:500; line-height:1.2;">Withdrawal</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       QUICK ACTIONS — 4 equal blocks, single layer, no overlap
+       ════════════════════════════════════════ -->
+  <div style="padding:16px 16px 0;">
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px;">
+
+      <!-- Teams -->
+      <button class="quick-action" data-action="teams" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:12px 4px; cursor:pointer; transition:border-color 0.2s;">
+        <div class="icon-3d-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <span style="font-size:10px; color:#d1d5db; font-weight:500; line-height:1.3; text-align:center;">Teams</span>
+      </button>
+
+      <!-- Record -->
+      <button class="quick-action" data-action="record" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:12px 4px; cursor:pointer; transition:border-color 0.2s;">
+        <div class="icon-3d-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        </div>
+        <span style="font-size:10px; color:#d1d5db; font-weight:500; line-height:1.3; text-align:center;">Record</span>
+      </button>
+
+      <!-- Wallet management (single line! per spec) -->
+      <button class="quick-action" data-action="wallet" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:12px 4px; cursor:pointer; transition:border-color 0.2s;">
+        <div class="icon-3d-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+        </div>
+        <span style="font-size:10px; color:#d1d5db; font-weight:500; line-height:1.3; text-align:center; white-space:nowrap;">Wallet management</span>
+      </button>
+
+      <!-- Invite friends -->
+      <button class="quick-action" data-action="invite" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:12px 4px; cursor:pointer; transition:border-color 0.2s;">
+        <div class="icon-3d-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </div>
+        <span style="font-size:10px; color:#d1d5db; font-weight:500; line-height:1.3; text-align:center;">Invite friends</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       MENU LIST
+       ════════════════════════════════════════ -->
+  <div style="padding:16px; display:flex; flex-direction:column; gap:8px;">
+
+    <!-- Profile -->
+    <button class="menu-row" data-action="profile" style="display:flex; align-items:center; gap:12px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:14px 14px; cursor:pointer; width:100%; transition:border-color 0.2s;">
+      <div class="icon-3d-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span style="flex:1; text-align:left; font-size:14px; font-weight:600; color:#d1d5db;">Profile</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <!-- Binding Wallet -->
+    <button class="menu-row" data-action="bind-wallet" style="display:flex; align-items:center; gap:12px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:14px 14px; cursor:pointer; width:100%; transition:border-color 0.2s;">
+      <div class="icon-3d-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+      <span style="flex:1; text-align:left; font-size:14px; font-weight:600; color:#d1d5db;">Binding Wallet</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <!-- Deposit records -->
+    <button class="menu-row" data-action="deposit-records" style="display:flex; align-items:center; gap:12px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:14px 14px; cursor:pointer; width:100%; transition:border-color 0.2s;">
+      <div class="icon-3d-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <span style="flex:1; text-align:left; font-size:14px; font-weight:600; color:#d1d5db;">Deposit records</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <!-- Withdrawal records -->
+    <button class="menu-row" data-action="withdrawal-records" style="display:flex; align-items:center; gap:12px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:14px 14px; cursor:pointer; width:100%; transition:border-color 0.2s;">
+      <div class="icon-3d-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></div>
+      <span style="flex:1; text-align:left; font-size:14px; font-weight:600; color:#d1d5db;">Withdrawal records</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <!-- Setting -->
+    <button class="menu-row" data-action="settings" style="display:flex; align-items:center; gap:12px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:14px 14px; cursor:pointer; width:100%; transition:border-color 0.2s;">
+      <div class="icon-3d-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <span style="flex:1; text-align:left; font-size:14px; font-weight:600; color:#d1d5db;">Setting</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <!-- Log out (red) -->
+    <button id="btnLogout" style="display:flex; align-items:center; gap:12px; background-color:#0c1017; border:1px solid #1a2230; border-radius:12px; padding:14px 14px; cursor:pointer; width:100%; transition:border-color 0.2s;">
+      <div class="icon-3d-sm" style="color:#EF4444;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </div>
+      <span style="flex:1; text-align:left; font-size:14px; font-weight:600; color:#EF4444;">Log out</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+  </div>
+
+  <!-- ════════════════════════════════════════
+       BOTTOM NAV
+       ════════════════════════════════════════ -->
+  <nav class="bottom-nav">
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg><span>Menu</span></a>
+    <a href="#" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.66V19a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1.66"/></svg><span>Mine</span></a>
+  </nav>
+
+</div><!-- /page-wrap -->
+
+
+<!-- ════════════════════════════════════════
+     INVITE MODAL (hidden by default)
+     ════════════════════════════════════════ -->
+<div id="inviteModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+      <h2 style="font-size:18px; font-weight:700; color:#ffffff;">Invite friends</h2>
+      <button id="closeInvite" style="background:none; border:none; color:#8b949e; font-size:22px; cursor:pointer; line-height:1;">&times;</button>
+    </div>
+    <p style="color:#8b949e; font-size:13px; margin-bottom:16px;">Share your invitation code or link. Friends who sign up with it become your referrals.</p>
+
+    <div style="margin-bottom:12px;">
+      <p style="color:#8b949e; font-size:11px; margin-bottom:6px;">Your invitation code</p>
+      <div style="display:flex; gap:8px;">
+        <input id="modalInviteCode" class="inp" value="ELENA888" readonly />
+        <button id="copyCodeModal" style="display:flex; align-items:center; justify-content:center; width:44px; height:44px; border:1px solid #1a1f2e; border-radius:12px; background:transparent; color:#F0A500; cursor:pointer; flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <p style="color:#8b949e; font-size:11px; margin-bottom:6px;">Invitation link</p>
+      <div style="display:flex; gap:8px;">
+        <input id="modalInviteLink" class="inp" style="font-size:13px; letter-spacing:normal; color:#ffffff;" value="https://example.com/auth?ref=ELENA888" readonly />
+        <button id="copyLinkModal" style="display:flex; align-items:center; justify-content:center; width:44px; height:44px; border:1px solid #1a1f2e; border-radius:12px; background:transparent; color:#F0A500; cursor:pointer; flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <button id="shareBtn" class="btn-gold" style="width:100%; padding:12px; font-size:14px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share
+    </button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     LOGOUT CONFIRMATION MODAL (hidden by default)
+     ════════════════════════════════════════ -->
+<div id="logoutModal" class="modal-overlay hidden">
+  <div class="modal-box" style="text-align:center;">
+    <h2 style="font-size:18px; font-weight:700; color:#ffffff; margin-bottom:8px;">Log out?</h2>
+    <p style="color:#8b949e; font-size:13px; margin-bottom:20px;">You will need to sign in again to access your account.</p>
+    <div style="display:flex; gap:10px;">
+      <button id="cancelLogout" style="flex:1; padding:12px; border:1px solid #1a2230; border-radius:12px; background:transparent; color:#8b949e; font-weight:600; font-size:14px; cursor:pointer;">Cancel</button>
+      <button id="confirmLogout" style="flex:1; padding:12px; border:none; border-radius:12px; background:#dc2626; color:#ffffff; font-weight:700; font-size:14px; cursor:pointer;">Log out</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT — interactions
+     ════════════════════════════════════════ -->
+<script>
+  (function() {
+    'use strict';
+
+    // ── Copy invitation code (top) ──
+    document.getElementById('copyCodeBtn').addEventListener('click', function() {
+      const code = this.querySelector('span').textContent.replace('Invitation code: ', '');
+      navigator.clipboard.writeText(code).then(function() {
+        showToast('Invitation code copied');
+      }).catch(function() {
+        fallbackCopy(code, 'Invitation code copied');
+      });
+    });
+
+    // ── Quick actions ──
+    document.querySelectorAll('.quick-action').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var action = this.getAttribute('data-action');
+        if (action === 'invite') {
+          document.getElementById('inviteModal').classList.remove('hidden');
+        } else {
+          showToast('Navigating to ' + action + '...');
+        }
+      });
+    });
+
+    // ── Menu rows ──
+    document.querySelectorAll('.menu-row').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        showToast('Opening ' + this.getAttribute('data-action') + '...');
+      });
+    });
+
+    // ── Logout ──
+    document.getElementById('btnLogout').addEventListener('click', function() {
+      document.getElementById('logoutModal').classList.remove('hidden');
+    });
+    document.getElementById('cancelLogout').addEventListener('click', function() {
+      document.getElementById('logoutModal').classList.add('hidden');
+    });
+    document.getElementById('confirmLogout').addEventListener('click', function() {
+      showToast('Logged out');
+      document.getElementById('logoutModal').classList.add('hidden');
+    });
+
+    // ── Invite modal ──
+    document.getElementById('closeInvite').addEventListener('click', function() {
+      document.getElementById('inviteModal').classList.add('hidden');
+    });
+    document.getElementById('inviteModal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.add('hidden');
+    });
+
+    // Copy code from modal
+    document.getElementById('copyCodeModal').addEventListener('click', function() {
+      var inp = document.getElementById('modalInviteCode');
+      navigator.clipboard.writeText(inp.value).then(function() {
+        showToast('Code copied');
+      }).catch(function() {
+        fallbackCopy(inp.value, 'Code copied');
+      });
+    });
+
+    // Copy link from modal
+    document.getElementById('copyLinkModal').addEventListener('click', function() {
+      var inp = document.getElementById('modalInviteLink');
+      navigator.clipboard.writeText(inp.value).then(function() {
+        showToast('Link copied');
+      }).catch(function() {
+        fallbackCopy(inp.value, 'Link copied');
+      });
+    });
+
+    // Share
+    document.getElementById('shareBtn').addEventListener('click', function() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Join me',
+          text: 'Use my invitation code: ELENA888',
+          url: 'https://example.com/auth?ref=ELENA888'
+        }).catch(function() {});
+      } else {
+        showToast('Share not available on this browser');
+      }
+    });
+
+    // ── Logout modal close on overlay click ──
+    document.getElementById('logoutModal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.add('hidden');
+    });
+
+    // ── Deposit / Withdrawal ──
+    document.getElementById('btnDeposit').addEventListener('click', function() {
+      showToast('Navigating to Deposit...');
+    });
+    document.getElementById('btnWithdrawal').addEventListener('click', function() {
+      showToast('Navigating to Withdrawal...');
+    });
+
+    // ── Border hover effects ──
+    var hoverables = document.querySelectorAll('.quick-action, .menu-row, #btnLogout, [id^="btnDeposit"], [id^="btnWithdrawal"]');
+    hoverables.forEach(function(el) {
+      el.addEventListener('mouseenter', function() { this.style.borderColor = '#2a3f52'; });
+      el.addEventListener('mouseleave', function() { this.style.borderColor = '#1a2230'; });
+    });
+
+    // ── Toast system ──
+    function showToast(msg) {
+      var existing = document.querySelector('.toast-msg');
+      if (existing) existing.remove();
+
+      var toast = document.createElement('div');
+      toast.className = 'toast-msg';
+      toast.textContent = msg;
+      toast.style.cssText =
+        'position:fixed; bottom:90px; left:50%; transform:translateX(-50%); ' +
+        'background:#0c1017; border:1px solid #1a2230; color:#ffffff; ' +
+        'padding:10px 24px; border-radius:12px; font-size:13px; font-weight:500; ' +
+        'z-index:2000; box-shadow:0 8px 28px rgba(0,0,0,0.5); ' +
+        'transition:opacity 0.3s ease;';
+      document.body.appendChild(toast);
+      setTimeout(function() { toast.style.opacity = '0'; }, 2000);
+      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 2400);
+    }
+
+    function fallbackCopy(text, label) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed'; ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); showToast(label); } catch(e) { showToast('Copy failed'); }
+      document.body.removeChild(ta);
+    }
+  })();
+</script>
+
+</body>
+</html>

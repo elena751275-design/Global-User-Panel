@@ -4,7 +4,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ShieldCheck, AlertCircle, Wallet, User, Lock } from "lucide-react";
@@ -94,57 +93,57 @@ const BindWallet = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-background pb-10">
+return (
+    <div className="min-h-screen bg-goldBg pb-10">
       <PageHeader title="Binding Wallet" />
       <div className="px-5 pt-3 flex items-center gap-3">
-        <div className="h-11 w-11 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center">
-          <Wallet className="h-5 w-5 text-accent" />
+        <div className="gold-icon-3d-sm">
+          <Wallet className="h-4 w-4" />
         </div>
-        <p className="text-xs text-muted-foreground">Bind your wallet address and set withdrawal security.</p>
+        <p className="text-xs text-gray-400">Bind your wallet address and set withdrawal security.</p>
       </div>
       <div className="px-5 mt-4">
-        <Card className="p-5 bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
+        <div className="luxury-card p-5">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <p className="text-sm text-gray-400">Loading...</p>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-1.5">
-                <Label>Wallet Name</Label>
+                <Label className="text-white">Wallet Name</Label>
                 <Select value={walletName} onValueChange={setWalletName}>
-                  <SelectTrigger><SelectValue placeholder="Select wallet" /></SelectTrigger>
-                  <SelectContent>{WALLET_NAMES.map(w => <SelectItem key={w} value={w}>{w}</SelectItem>)}</SelectContent>
+                  <SelectTrigger className="bg-[#0f131e] border-goldBorder text-white"><SelectValue placeholder="Select wallet" /></SelectTrigger>
+                  <SelectContent style={{ backgroundColor: '#0a0d14', border: '1px solid #1a1f2e' }}>{WALLET_NAMES.map(w => <SelectItem key={w} value={w} className="text-white focus:bg-luxuryGold-main/10">{w}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label>Network</Label>
+                <Label className="text-white">Network</Label>
                 <Select value={network} onValueChange={setNetwork} disabled={hasExisting}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{NETWORKS.map(n => <SelectItem key={n} value={n}>USDT • {n}</SelectItem>)}</SelectContent>
+                  <SelectTrigger className="bg-[#0f131e] border-goldBorder text-white"><SelectValue /></SelectTrigger>
+                  <SelectContent style={{ backgroundColor: '#0a0d14', border: '1px solid #1a1f2e' }}>{NETWORKS.map(n => <SelectItem key={n} value={n} className="text-white focus:bg-luxuryGold-main/10">USDT • {n}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label>Wallet Address</Label>
-                <Input id="addr" value={address} onChange={e => setAddress(e.target.value.trim())} placeholder={network === "TRC20" ? "T..." : "0x..."} className="font-mono text-sm" required />
+                <Label className="text-white">Wallet Address</Label>
+                <Input id="addr" value={address} onChange={e => setAddress(e.target.value.trim())} placeholder={network === "TRC20" ? "T..." : "0x..."} className="font-mono text-sm bg-[#0f131e] border-goldBorder text-white" required />
               </div>
               <div className="space-y-1.5">
-                <Label className="flex items-center gap-1.5"><User className="h-3.5 w-3.5" /> Customer Name</Label>
-                <Input value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Your full name" required />
+                <Label className="flex items-center gap-1.5 text-white"><User className="h-3.5 w-3.5" /> Customer Name</Label>
+                <Input value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Your full name" required className="bg-[#0f131e] border-goldBorder text-white" />
               </div>
               <div className="space-y-1.5">
-                <Label className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" /> Withdrawal Password</Label>
-                <Input type="password" value={withdrawalPassword} onChange={e => setWithdrawalPassword(e.target.value)} placeholder="Min 6 characters" required />
+                <Label className="flex items-center gap-1.5 text-white"><Lock className="h-3.5 w-3.5" /> Withdrawal Password</Label>
+                <Input type="password" value={withdrawalPassword} onChange={e => setWithdrawalPassword(e.target.value)} placeholder="Min 6 characters" required className="bg-[#0f131e] border-goldBorder text-white" />
               </div>
-              <div className="flex items-start gap-2 text-xs text-accent bg-accent/10 p-3 rounded-lg border border-accent/20">
+              <div className="flex items-start gap-2 text-xs text-luxuryGold-main bg-luxuryGold-main/10 p-3 rounded-lg border border-luxuryGold-main/20">
                 <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                 <p>Double-check your address. <span className="font-semibold">Cannot be recovered</span> if wrong.</p>
               </div>
-              <Button type="submit" className="w-full h-11 text-base font-semibold bg-primary text-primary-foreground hover:opacity-90" disabled={saving}>
+              <Button type="submit" className="w-full h-11 text-base font-semibold btn-gold" disabled={saving}>
                 {saving ? "Saving..." : hasExisting ? "Update Wallet" : "Bind Wallet"}
               </Button>
             </form>
           )}
-        </Card>
+        </div>
       </div>
     </div>
   );

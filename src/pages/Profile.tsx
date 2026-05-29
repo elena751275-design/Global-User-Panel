@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import PageHeader from "@/components/PageHeader";
@@ -70,46 +69,48 @@ const Profile = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-background">
+return (
+    <div className="min-h-screen bg-goldBg">
       <PageHeader title="Profile" />
 
       <div className="px-5 pt-5">
-        <Card className="p-5 bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
+        <div className="luxury-card p-5">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <p className="text-sm text-gray-400">Loading...</p>
           ) : (
             <form onSubmit={handleSave} className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" value={user?.email ?? ""} disabled />
+                <Label htmlFor="email" className="text-white">Email</Label>
+                <Input id="email" value={user?.email ?? ""} disabled className="bg-[#0f131e] border-goldBorder text-white/60" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username" className="text-white">Username</Label>
                 <Input
                   id="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Your username"
                   maxLength={30}
+                  className="bg-[#0f131e] border-goldBorder text-white"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="fullName">Full name</Label>
+                <Label htmlFor="fullName" className="text-white">Full name</Label>
                 <Input
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Your full name"
                   maxLength={60}
+                  className="bg-[#0f131e] border-goldBorder text-white"
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={saving}>
+              <Button type="submit" className="w-full btn-gold" disabled={saving}>
                 {saving ? "Saving..." : "Save changes"}
               </Button>
             </form>
           )}
-        </Card>
+        </div>
       </div>
     </div>
   );

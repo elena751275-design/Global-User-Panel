@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle } from "lucide-react";
@@ -164,49 +163,45 @@ const PlatformDetail = () => {
     }, 1500);
   };
 
-  return (
-    <div className="min-h-screen pb-20 bg-background">
+return (
+    <div className="min-h-screen pb-20 bg-goldBg">
       <PageHeader title={platform || "Platform"} onBack={() => navigate("/menu")} />
       <div className="px-5 pt-4">
-        <Card className="bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
-          <CardContent className="p-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Account Balance</p>
-            <p className="text-2xl font-extrabold mt-1 gold-text">{accountBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-sm font-medium text-muted-foreground">USDT</span></p>
-          </CardContent>
-        </Card>
+        <div className="luxury-card p-4">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400">Account Balance</p>
+          <p className="text-2xl font-extrabold mt-1 gold-gradient-text">{accountBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })} <span className="text-sm font-medium text-gray-400">USDT</span></p>
+        </div>
       </div>
 
       {/* Stats Card */}
       <div className="px-5 mt-4">
-        <Card className="bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
-          <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="border-b border-r border-border pb-3">
-                <p className="text-lg font-bold text-foreground">{dailyOrderCount}</p>
-                <p className="text-xs text-muted-foreground">Today's Orders</p>
-              </div>
-              <div className="border-b border-border pb-3">
-                <p className="text-lg font-bold gold-text">{totalCommission.toFixed(2)} USDT</p>
-                <p className="text-xs text-muted-foreground">Today's commission</p>
-              </div>
-              <div className="border-r border-border pb-1">
-                <p className="text-lg font-bold text-foreground">{dailyRemaining}</p>
-                <p className="text-xs text-muted-foreground">Remaining Today</p>
-              </div>
-              <div className="pb-1">
-                <p className="text-lg font-bold text-foreground">{config.commission}%</p>
-                <p className="text-xs text-muted-foreground">Commission Rate</p>
-              </div>
+        <div className="luxury-card p-4">
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div className="border-b border-r border-goldBorder pb-3">
+              <p className="text-lg font-bold text-white">{dailyOrderCount}</p>
+              <p className="text-xs text-gray-400">Today's Orders</p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="border-b border-goldBorder pb-3">
+              <p className="text-lg font-bold gold-gradient-text">{totalCommission.toFixed(2)} USDT</p>
+              <p className="text-xs text-gray-400">Today's commission</p>
+            </div>
+            <div className="border-r border-goldBorder pb-1">
+              <p className="text-lg font-bold text-white">{dailyRemaining}</p>
+              <p className="text-xs text-gray-400">Remaining Today</p>
+            </div>
+            <div className="pb-1">
+              <p className="text-lg font-bold text-white">{config.commission}%</p>
+              <p className="text-xs text-gray-400">Commission Rate</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Grab Order Button */}
       <div className="px-8 mt-8">
         <Button
           onClick={grabOrder}
-          className="w-full h-14 rounded-full text-lg font-bold bg-primary text-primary-foreground hover:opacity-90 shadow-[var(--shadow-glow-violet)]"
+          className="btn-gold w-full h-14 rounded-full text-lg font-bold"
           disabled={dailyOrderCount >= MAX_DAILY || !initialized}
         >
           {dailyOrderCount >= MAX_DAILY ? "Daily Limit Reached" : initialized ? "Grab the order immediately" : "Loading..."}
@@ -215,60 +210,60 @@ const PlatformDetail = () => {
 
       {/* Global Progress */}
       <div className="px-8 mt-4 text-center">
-        <p className="text-sm text-muted-foreground">
-          Completed: <span className="font-bold text-accent">{dailyOrderCount}</span> / {MAX_DAILY} orders today
+        <p className="text-sm text-gray-400">
+          Completed: <span className="font-bold text-luxuryGold-main">{dailyOrderCount}</span> / {MAX_DAILY} orders today
         </p>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-gray-400 mt-1">
           Balance Range: {config.rangeLabel} USDT | Commission: {config.commission}%
         </p>
       </div>
 
       {/* Hints */}
       <div className="px-5 mt-6">
-        <p className="text-sm text-muted-foreground font-medium">Hint:</p>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-sm text-gray-400 font-medium">Hint:</p>
+        <p className="text-xs text-gray-400 mt-1">
           1: {config.commission}% commission on completed transactions.
         </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
+        <p className="text-xs text-gray-400 mt-0.5">
           2: Complete orders as soon as possible after matching to avoid delays.
         </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
+        <p className="text-xs text-gray-400 mt-0.5">
           3: Daily limit of {MAX_DAILY} orders shared across all platforms.
         </p>
       </div>
 
       {/* Product Dialog */}
       <Dialog open={showProduct} onOpenChange={(open) => !orderSubmitted && setShowProduct(open)}>
-        <DialogContent className="max-w-sm mx-auto bg-card border border-border">
+        <DialogContent className="max-w-sm mx-auto rounded-2xl" style={{ backgroundColor: '#0a0d14', border: '1px solid #1a1f2e' }}>
           <DialogHeader>
-            <DialogTitle className="text-center">Order #{dailyOrderCount + 1}</DialogTitle>
+            <DialogTitle className="text-white text-center">Order #{dailyOrderCount + 1}</DialogTitle>
           </DialogHeader>
           {currentProduct && (
             <div className="space-y-4">
-              <div className="rounded-lg overflow-hidden border border-border">
+              <div className="rounded-lg overflow-hidden border border-goldBorder">
                 <img src={currentProduct.image} alt={currentProduct.name} className="w-full h-48 object-cover" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">{currentProduct.name}</h3>
+                <h3 className="font-semibold text-white">{currentProduct.name}</h3>
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-muted-foreground">Price</span>
-                  <span className="font-bold">${currentProduct.price.toFixed(2)}</span>
+                  <span className="text-sm text-gray-400">Price</span>
+                  <span className="font-bold text-white">${currentProduct.price.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center mt-1">
-                  <span className="text-sm text-muted-foreground">Commission</span>
-                  <span className="font-bold gold-text">+${currentProduct.commission.toFixed(2)}</span>
+                  <span className="text-sm text-gray-400">Commission</span>
+                  <span className="font-bold gold-gradient-text">+${currentProduct.commission.toFixed(2)}</span>
                 </div>
               </div>
               {orderSubmitted ? (
                 <div className="flex flex-col items-center gap-2 py-4">
-                  <CheckCircle className="h-12 w-12 text-success" />
-                  <p className="font-bold text-success">Order Completed!</p>
-                  <p className="text-sm text-muted-foreground">
+                  <CheckCircle className="h-12 w-12 text-green-500" />
+                  <p className="font-bold text-green-500">Order Completed!</p>
+                  <p className="text-sm text-gray-400">
                     Commission +${currentProduct.commission.toFixed(2)} added
                   </p>
                 </div>
               ) : (
-                <Button onClick={submitOrder} className="w-full h-12 rounded-full text-base font-bold bg-primary text-primary-foreground hover:opacity-90 shadow-[var(--shadow-glow-violet)]">
+                <Button onClick={submitOrder} className="btn-gold w-full h-12 rounded-full text-base font-bold">
                   Submit order
                 </Button>
               )}
@@ -280,16 +275,16 @@ const PlatformDetail = () => {
       {/* Combo Order Restriction Popup */}
       {comboPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center">
-            <p className="text-lg font-bold text-foreground mb-2">⚠️ Incomplete Combo Order</p>
-            <p className="text-sm text-muted-foreground mb-4">
+          <div className="luxury-card p-6 max-w-sm mx-4 shadow-lg text-center">
+            <p className="text-lg font-bold text-white mb-2">Incomplete Combo Order</p>
+            <p className="text-sm text-gray-400 mb-4">
               {pendingCombo && (Number(accountBalance || 0)) < (Number(pendingCombo.rechargeShortage) || 0)
-                ? <>Your account balance is not enough, you need to recharge <span className="font-bold text-accent">${pendingCombo.rechargeShortage?.toFixed(2)}</span> to submit this order</>
+                ? <>Your account balance is not enough, you need to recharge <span className="font-bold text-luxuryGold-main">${pendingCombo.rechargeShortage?.toFixed(2)}</span> to submit this order</>
                 : <>You have an incomplete combo order at task #{pendingCombo?.comboOrderNumber || pendingCombo?.orderNumber}. Complete it in your Record page.</>
               }
             </p>
             <button onClick={() => { setComboPopup(false); navigate('/record?tab=incomplete'); }}
-              className="w-full rounded-xl bg-primary text-primary-foreground py-2.5 text-sm font-semibold">
+              className="w-full rounded-xl btn-gold py-2.5 text-sm font-semibold">
               Go to Incomplete Orders
             </button>
           </div>

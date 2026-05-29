@@ -4,7 +4,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { AlertCircle, ShieldCheck, Link as LinkIcon, Lock, Wallet } from "lucide-react";
 import { z } from "zod";
@@ -92,78 +91,78 @@ const Withdrawal = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-background pb-10">
+return (
+    <div className="min-h-screen bg-goldBg pb-10">
       <PageHeader title="Withdraw USDT" />
-      <div className="px-5 pt-3 text-sm text-muted-foreground">
-        Available: <span className="gold-text font-bold">${balance.toFixed(2)}</span>
+      <div className="px-5 pt-3 text-sm text-gray-400">
+        Available: <span className="gold-gradient-text font-bold">${balance.toFixed(2)}</span>
       </div>
       <div className="px-5 mt-4">
-        <Card className="p-4 bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)]">
+        <div className="luxury-card p-4">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <p className="text-sm text-gray-400">Loading...</p>
           ) : !hasWallet ? (
             <div className="space-y-4 py-2 text-center">
-              <div className="mx-auto h-12 w-12 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center">
-                <LinkIcon className="h-6 w-6 text-accent" />
+              <div className="mx-auto gold-icon-3d-sm">
+                <LinkIcon className="h-4 w-4" />
               </div>
-              <h3 className="font-semibold">No Wallet Bound</h3>
-              <p className="text-sm text-muted-foreground mt-1">Bind your wallet address before requesting a withdrawal.</p>
-              <Button className="w-full bg-primary text-primary-foreground hover:opacity-90" onClick={() => navigate("/bind-wallet")}>
+              <h3 className="font-semibold text-white">No Wallet Bound</h3>
+              <p className="text-sm text-gray-400 mt-1">Bind your wallet address before requesting a withdrawal.</p>
+              <Button className="w-full btn-gold" onClick={() => navigate("/bind-wallet")}>
                 Bind Wallet Now
               </Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Bound Wallet Read-Only */}
-              <div className="rounded-xl border border-border bg-secondary/60 p-3">
+              <div className="rounded-xl border border-goldBorder bg-[#0f131e] p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="h-4 w-4 text-success" />
-                    <span className="text-xs font-medium text-muted-foreground">Bound Wallet</span>
+                    <ShieldCheck className="h-4 w-4 text-green-500" />
+                    <span className="text-xs font-medium text-gray-400">Bound Wallet</span>
                   </div>
-                  <button type="button" onClick={() => navigate("/bind-wallet")} className="text-xs text-accent hover:underline">
+                  <button type="button" onClick={() => navigate("/bind-wallet")} className="text-xs text-luxuryGold-main hover:underline">
                     Manage
                   </button>
                 </div>
                 <div className="mt-2 space-y-1">
                   <div className="flex items-center gap-2">
-                    <Wallet className="h-3.5 w-3.5 text-accent" />
-                    <p className="text-sm font-semibold">{walletName}</p>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-accent font-semibold">
+                    <Wallet className="h-3.5 w-3.5 text-luxuryGold-main" />
+                    <p className="text-sm font-semibold text-white">{walletName}</p>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-luxuryGold-main/10 border border-luxuryGold-main/30 text-luxuryGold-main font-semibold">
                       {walletNetwork}
                     </span>
                   </div>
-                  <p className="font-mono text-xs text-muted-foreground break-all">{walletAddress}</p>
+                  <p className="font-mono text-xs text-gray-400 break-all">{walletAddress}</p>
                 </div>
               </div>
 
               {/* Amount */}
               <div>
-                <Label htmlFor="amount">Amount (USDT)</Label>
-                <Input id="amount" type="number" step="0.01" min={1} max={balance} value={amount} onChange={e => setAmount(e.target.value)} required />
-                <p className="text-xs text-muted-foreground mt-1">Min: 1 USDT</p>
+                <Label htmlFor="amount" className="text-white">Amount (USDT)</Label>
+                <Input id="amount" type="number" step="0.01" min={1} max={balance} value={amount} onChange={e => setAmount(e.target.value)} required className="bg-[#0f131e] border-goldBorder text-white" />
+                <p className="text-xs text-gray-400 mt-1">Min: 1 USDT</p>
               </div>
 
               {/* Withdrawal Password */}
               <div>
-                <Label htmlFor="wdpass" className="flex items-center gap-1.5">
+                <Label htmlFor="wdpass" className="flex items-center gap-1.5 text-white">
                   <Lock className="h-3.5 w-3.5" /> Withdrawal Password
                 </Label>
-                <Input id="wdpass" type="password" value={withdrawalPassword} onChange={e => setWithdrawalPassword(e.target.value)} placeholder="Enter your withdrawal password" required />
+                <Input id="wdpass" type="password" value={withdrawalPassword} onChange={e => setWithdrawalPassword(e.target.value)} placeholder="Enter your withdrawal password" required className="bg-[#0f131e] border-goldBorder text-white" />
               </div>
 
-              <div className="flex items-start gap-2 text-xs text-muted-foreground bg-accent/10 border border-accent/20 p-3 rounded-lg">
-                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-accent" />
+              <div className="flex items-start gap-2 text-xs text-gray-400 bg-luxuryGold-main/8 border border-luxuryGold-main/20 p-3 rounded-lg">
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-luxuryGold-main" />
                 <p>Withdrawals are processed by admin within 24 hours. Funds will be sent to your bound wallet.</p>
               </div>
 
-              <Button type="submit" className="w-full bg-primary text-primary-foreground hover:opacity-90" disabled={submitting || balance < 1}>
+              <Button type="submit" className="w-full btn-gold" disabled={submitting || balance < 1}>
                 {submitting ? "Submitting..." : "Submit Withdrawal"}
               </Button>
             </form>
           )}
-        </Card>
+        </div>
       </div>
     </div>
   );
