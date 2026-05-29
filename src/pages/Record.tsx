@@ -1,11 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import BottomNav from "@/components/BottomNav";
 import { AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-// import { supabase } from "@/integrations/supabase/client"; // Removed Supabase
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import PageHeader from "@/components/PageHeader";
@@ -20,6 +19,11 @@ interface OrderRow {
   created_at: string;
   completed_at: string | null;
   status: "pending" | "submitted" | "completed" | "cancelled";
+  _type?: string;
+  productList?: any[];
+  expectedIncome?: number;
+  shortageAmount?: number;
+  rechargeNeeded?: number;
 }
 
 const Record = () => {
@@ -50,7 +54,6 @@ const Record = () => {
       const profileData = await profileRes.json();
       const comboData = await comboRes.json();
 
-      // Merge combo orders into orders list
       const regularOrders = ordersData.success ? (ordersData.orders || []) : [];
       const combos = comboData.success ? (comboData.combos || []) : [];
       const merged = [
@@ -101,7 +104,6 @@ const Record = () => {
     const orderAmount = Number(order.amount) || 0;
     const shortage = Number((order as any).shortageAmount) || 0;
 
-    // For combo orders, check recharge needed vs balance
     const rechargeNeeded = order._type === 'combo'
       ? Math.max(shortage, orderAmount - balance)
       : Math.max(0, orderAmount - balance);
@@ -142,27 +144,27 @@ const Record = () => {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-goldBg pb-20">
       <PageHeader title="Record" />
 
       {/* Tabs */}
-      <div className="flex border-b border-border bg-background">
+      <div className="flex bg-[#0a0d14]">
         <button
           onClick={() => setActiveTab("incomplete")}
-          className={`flex-1 py-3 text-sm font-medium text-center transition-colors ${
+          className={`flex-1 py-3 text-sm font-medium text-center transition-colors border-b-2 ${
             activeTab === "incomplete"
-              ? "text-accent border-b-2 border-accent"
-              : "text-muted-foreground"
+              ? "text-luxuryGold-main border-luxuryGold-main"
+              : "text-gray-500 border-transparent"
           }`}
         >
           Incomplete
         </button>
         <button
           onClick={() => setActiveTab("complete")}
-          className={`flex-1 py-3 text-sm font-medium text-center transition-colors ${
+          className={`flex-1 py-3 text-sm font-medium text-center transition-colors border-b-2 ${
             activeTab === "complete"
-              ? "text-accent border-b-2 border-accent"
-              : "text-muted-foreground"
+              ? "text-luxuryGold-main border-luxuryGold-main"
+              : "text-gray-500 border-transparent"
           }`}
         >
           Complete
@@ -170,11 +172,11 @@ const Record = () => {
       </div>
 
       {/* Orders */}
-      <div className="px-5 py-4 space-y-3">
+      <div className="px-4 py-4 space-y-3">
         {loading || profileLoading ? (
-          <p className="text-center text-muted-foreground text-sm py-10">Loading...</p>
+          <p className="text-center text-gray-400 text-sm py-10">Loading...</p>
         ) : filteredOrders.length === 0 ? (
-          <p className="text-center text-muted-foreground text-sm py-10">No orders found</p>
+          <p className="text-center text-gray-400 text-sm py-10">No orders found</p>
         ) : (
           filteredOrders.map((order) => {
             const orderAmount = Number(order.amount);
@@ -183,105 +185,103 @@ const Record = () => {
             const isCombo = orderAmount > balance && order.status !== "completed";
 
             return (
-              <Card key={order.id} className="bg-card border border-border rounded-2xl shadow-[var(--shadow-tile)] overflow-hidden">
-                <CardContent className="p-4 space-y-3">
-                  {/* Order No */}
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">
-                      Order Nos: <span className="bg-secondary px-2 py-0.5 rounded text-foreground font-mono">{order.order_no}</span>
-                    </p>
-                    {isCombo && (
-                      <span className="text-[10px] vip-badge px-2 py-0.5 rounded font-bold">
-                        COMBO
-                      </span>
-                    )}
-                  </div>
+              <div key={order.id} className="rounded-2xl p-4 space-y-3 luxury-card">
+                {/* Order No */}
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-gray-400">
+                    Order Nos: <span className="bg-[#0f131e] px-2 py-0.5 rounded text-brandHeading font-mono text-xs">{order.order_no}</span>
+                  </p>
+                  {isCombo && (
+                    <Badge className="border-none font-bold text-[10px] px-2 py-0.5 shadow-lg shadow-amber-500/20" style={{ background: 'linear-gradient(to right, #BF953F, #FCF6BA, #B38728)', color: '#000000' }}>
+                      COMBO
+                    </Badge>
+                  )}
+                </div>
 
-                  {/* Product Info */}
-                  {order._type === 'combo' && (order as any).productList ? (
-                    <div className="space-y-2">
-                      {(order as any).productList.map((p: any, i: number) => (
-                        <div key={i} className="flex gap-2 items-center bg-secondary rounded-lg p-2">
-                          <div className="w-10 h-10 rounded bg-accent/10 flex items-center justify-center flex-shrink-0">
-                            {p.image && !String(p.image).startsWith('blob:') ? (
-                              <img src={p.image} alt={p.name || `Product ${i+1}`} className="w-10 h-10 rounded object-cover"
-                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                            ) : (
-                              <span className="text-[10px] font-bold text-accent">#{i+1}</span>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium">{p.name || `Product ${i+1}`}</p>
-                            <p className="text-[10px] text-muted-foreground">${p.unitPrice} × {p.quantity} = ${p.subtotal || p.unitPrice * p.quantity}</p>
-                          </div>
+                {/* Product Info */}
+                {order._type === 'combo' && (order as any).productList ? (
+                  <div className="space-y-2">
+                    {(order as any).productList.map((p: any, i: number) => (
+                      <div key={i} className="flex gap-2 items-center bg-[#0f131e] rounded-lg p-2">
+                        <div className="w-10 h-10 rounded bg-[#1a1510] border border-goldBorder flex items-center justify-center flex-shrink-0">
+                          {p.image && !String(p.image).startsWith('blob:') ? (
+                            <img src={p.image} alt={p.name || `Product ${i+1}`} className="w-10 h-10 rounded object-cover"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          ) : (
+                            <span className="text-[10px] font-bold text-goldPrimary">#{i+1}</span>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex gap-3 items-start">
-<img
-                        src={order.product_image && !String(order.product_image).startsWith('blob:') ? order.product_image : "/placeholder.svg"}
-                        alt={order.product_name}
-                        className="w-16 h-16 rounded-lg object-cover border border-border"
-                        onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium leading-tight line-clamp-2">{order.product_name}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-brandHeading">{p.name || `Product ${i+1}`}</p>
+                          <p className="text-[10px] text-gray-400">${p.unitPrice} &times; {p.quantity} = ${p.subtotal || p.unitPrice * p.quantity}</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Details */}
-                  <div className="space-y-1.5 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Transaction time</span>
-                      <span>{new Date(order.created_at).toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Order amount</span>
-                      <span>{orderAmount.toFixed(2)}USDT</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Commissions</span>
-                      <span>{commission.toFixed(2)}USDT</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Expected income</span>
-                      <span className="gold-text font-bold text-base">{expectedIncome.toFixed(2)}USDT</span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex gap-3 items-start">
+                    <img
+                      src={order.product_image && !String(order.product_image).startsWith('blob:') ? order.product_image : "/placeholder.svg"}
+                      alt={order.product_name}
+                      className="w-16 h-16 rounded-lg object-cover border border-goldBorder"
+                      onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium leading-tight line-clamp-2 text-brandHeading">{order.product_name}</p>
                     </div>
                   </div>
+                )}
 
-                  {/* Submit Button */}
-                  {order.status !== "completed" && (
-                    <Button
-                      disabled={submittingId === order.id}
-                      onClick={() => handleSubmit(order)}
-                      className="w-full bg-primary text-primary-foreground font-semibold hover:opacity-90 shadow-[var(--shadow-glow-violet)]"
-                    >
-                      {submittingId === order.id ? "Submitting..." : isCombo ? "Recharge to submit" : "Submit order"}
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
+                {/* Details */}
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Transaction time</span>
+                    <span className="text-gray-300">{new Date(order.created_at).toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Order amount</span>
+                    <span className="text-gray-300">{orderAmount.toFixed(2)} USDT</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Commissions</span>
+                    <span className="text-gray-300">{commission.toFixed(2)} USDT</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Expected income</span>
+                    <span className="gold-gradient-text font-bold text-base">{expectedIncome.toFixed(2)} USDT</span>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                {order.status !== "completed" && (
+                  <Button
+                    disabled={submittingId === order.id}
+                    onClick={() => handleSubmit(order)}
+                    className="w-full btn-gold"
+                  >
+                    {submittingId === order.id ? "Submitting..." : isCombo ? "Recharge to submit" : "Submit order"}
+                  </Button>
+                )}
+              </div>
             );
           })
         )}
 
         {!loading && filteredOrders.length > 0 && (
-          <p className="text-center text-muted-foreground text-xs py-2">No more</p>
+          <p className="text-center text-gray-500 text-xs py-2">No more</p>
         )}
       </div>
 
       {/* Recharge Popup */}
       <Dialog open={rechargeOpen} onOpenChange={setRechargeOpen}>
-        <DialogContent className="max-w-sm mx-auto p-0 overflow-hidden border-0">
-          <div className="p-6 text-foreground" style={{ background: "var(--gradient-header)" }}>
-            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-accent/15 border border-accent/30 backdrop-blur mx-auto mb-3">
-              <AlertCircle className="h-8 w-8 text-accent" />
+        <DialogContent className="max-w-sm mx-auto p-0 overflow-hidden border-0 rounded-2xl">
+          <div className="p-6 text-white" style={{ background: 'linear-gradient(160deg, #1a1a2e 0%, #16213e 60%, #0a0d14 100%)' }}>
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-luxuryGold-main/10 border border-luxuryGold-main/20 backdrop-blur mx-auto mb-3">
+              <AlertCircle className="h-8 w-8 text-luxuryGold-main" />
             </div>
             <DialogHeader>
-              <DialogTitle className="text-foreground text-center text-lg">Recharge Required</DialogTitle>
-              <DialogDescription className="text-muted-foreground text-center text-sm">
+              <DialogTitle className="text-white text-center text-lg">Recharge Required</DialogTitle>
+              <DialogDescription className="text-gray-400 text-center text-sm">
                 {rechargeOrder?._type === 'combo'
                   ? `Your balance is insufficient for this combo order. Recharge the amount below to submit.`
                   : `Your balance is insufficient to complete this order.`}
@@ -289,30 +289,30 @@ const Record = () => {
             </DialogHeader>
           </div>
 
-          <div className="p-5 space-y-3 bg-card">
+          <div className="p-5 space-y-3 bg-[#0a0d14]">
             {rechargeOrder && (
               <>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Order amount</span>
-                  <span className="font-medium">{Number(rechargeOrder.amount).toFixed(2)} USDT</span>
+                  <span className="text-gray-400">Order amount</span>
+                  <span className="font-medium text-white">{Number(rechargeOrder.amount).toFixed(2)} USDT</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Your balance</span>
-                  <span className="font-medium">{balance.toFixed(2)} USDT</span>
+                  <span className="text-gray-400">Your balance</span>
+                  <span className="font-medium text-white">{balance.toFixed(2)} USDT</span>
                 </div>
-                <div className="flex justify-between items-center pt-3 border-t border-dashed border-border">
-                  <span className="text-sm font-semibold">Recharge needed</span>
-                  <span className="text-xl font-bold gold-text">{rechargeAmount.toFixed(2)} USDT</span>
+                <div className="flex justify-between items-center pt-3 border-t border-goldBorder">
+                  <span className="text-sm font-semibold text-white">Recharge needed</span>
+                  <span className="text-xl font-bold gold-gradient-text">{rechargeAmount.toFixed(2)} USDT</span>
                 </div>
               </>
             )}
 
             <DialogFooter className="flex-row gap-2 pt-2">
-              <Button variant="outline" className="flex-1" onClick={() => setRechargeOpen(false)}>
+              <Button variant="outline" className="flex-1 border-goldBorder text-gray-400 hover:bg-[#1a1f2e]" onClick={() => setRechargeOpen(false)}>
                 Later
               </Button>
               <Button
-                className="flex-1 bg-primary text-primary-foreground hover:opacity-90"
+                className="flex-1 btn-gold"
                 onClick={() => {
                   setRechargeOpen(false);
                   navigate("/deposit");

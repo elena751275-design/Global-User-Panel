@@ -178,3 +178,72 @@
   font-weight: 700;
   letter-spacing: 0.04em;
 }
+
+/* ─── Luxury Gold Icon System ─── */
+.gold-icon-3d {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, #1a1510, #0d0b08);
+  border: 1px solid #2C251E;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  color: #BFA37A;
+}
+.gold-icon-3d-sm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.625rem;
+  background: linear-gradient(145deg, #1a1510, #0d0b08);
+  border: 1px solid #2C251E;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  color: #BFA37A;
+}
+
+/* ─── Brand Color Utilities ─── */
+.text-goldPrimary { color: #C29F74; }
+.text-luxuryGold-main { color: #C29F74; }
+.text-brandHeading { color: #D1D5DB; }
+.text-brandMuted { color: #9CA3AF; }
+.bg-goldBg { background-color: #0a0d14; }
+.border-goldBorder { border-color: #1a1f2e; }
+.bg-luxuryGold-main\/8 { background-color: rgba(194, 159, 116, 0.08); }
+.bg-luxuryGold-main\/6 { background-color: rgba(194, 159, 116, 0.06); }
+
+/* ─── Gold Gradient Text (inline-style fallback) ─── */
+.gold-gradient-text {
+  background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* ─── Dark Luxury Card ─── */
+.luxury-card {
+  background-color: #0a0d14;
+  border: 1px solid #1a1f2e;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  border-radius: 1rem;
+  transition: border-color 300ms;
+}
+.luxury-card:hover {
+  border-color: #2a3f52;
+}
+
+/* ─── Gold gradient button ─── */
+.btn-gold {
+  background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
+  color: #000;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.2);
+}
+.btn-gold:hover {
+  opacity: 0.9;
+}

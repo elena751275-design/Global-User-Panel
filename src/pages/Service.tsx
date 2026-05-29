@@ -23,7 +23,6 @@ const Service = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<any>(null);
 
-  // Fetch telegram username
   useEffect(() => {
     fetch("http://localhost:3002/api/support/telegram")
       .then(res => res.json())
@@ -31,38 +30,27 @@ const Service = () => {
       .catch(err => console.error("Telegram fetch error:", err));
   }, []);
 
-  // Socket.IO for real-time chat
   useEffect(() => {
     if (!showChat || !user?._id) return;
-
     const socket = io("http://localhost:3002", { transports: ["websocket", "polling"] });
     socketRef.current = socket;
-
     socket.on("connect", () => {
       console.log("User connected to chat socket");
       socket.emit("join-room", user._id);
     });
-
     socket.on("connect_error", (err) => {
       console.error("Socket connection error:", err.message);
     });
-
     socket.on("new-message", (msg: ChatMessage) => {
       setMessages(prev => [...prev, msg]);
     });
-
-    // Load history
     fetch(`http://localhost:3002/api/support/messages/${user._id}`)
       .then(res => res.json())
       .then(data => { if (Array.isArray(data)) setMessages(data); })
       .catch(err => console.error("History fetch error:", err));
-
-    return () => {
-      socket.disconnect();
-    };
+    return () => { socket.disconnect(); };
   }, [showChat, user?._id]);
 
-  // Auto-scroll
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -90,11 +78,11 @@ const Service = () => {
 
   if (showChat) {
     return (
-      <div className="min-h-screen pb-20 flex flex-col bg-background">
+      <div className="min-h-screen pb-20 flex flex-col bg-goldBg">
         <PageHeader title="Live Chat Support" onBack={() => setShowChat(false)} />
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
           {messages.length === 0 ? (
-            <div className="text-center text-muted-foreground text-xs py-8">
+            <div className="text-center text-gray-400 text-xs py-8">
               Start a conversation. Our team is ready to help.
             </div>
           ) : (
@@ -103,13 +91,13 @@ const Service = () => {
                 <div
                   className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${
                     msg.sender === "user"
-                      ? "bg-primary text-primary-foreground rounded-br-sm"
-                      : "bg-card text-card-foreground border border-border rounded-bl-sm"
+                      ? "btn-gold text-black rounded-br-sm"
+                      : "bg-[#0f131e] text-white border border-goldBorder rounded-bl-sm"
                   }`}
                 >
-                  <p className="text-xs font-medium">{msg.senderName || (msg.sender === "admin" ? "Admin" : "You")}</p>
-                  <p className="text-sm">{msg.text}</p>
-                  <p className="text-[9px] mt-1 opacity-50">
+                  <p className="text-xs font-medium opacity-70">{msg.senderName || (msg.sender === "admin" ? "Admin" : "You")}</p>
+                  <p className="text-sm mt-0.5">{msg.text}</p>
+                  <p className="text-[9px] mt-1 opacity-40">
                     {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                   </p>
                 </div>
@@ -118,15 +106,18 @@ const Service = () => {
           )}
           <div ref={chatEndRef} />
         </div>
-        <div className="px-4 py-3 border-t border-border flex gap-2">
+        <div className="px-4 py-3 border-t border-goldBorder flex gap-2 bg-[#0a0d14]">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Type a message..."
-            className="flex-1 bg-secondary text-foreground placeholder:text-muted-foreground rounded-full px-4 py-2.5 text-sm outline-none border border-border focus:border-primary"
+            className="flex-1 bg-[#0f131e] text-white placeholder:text-gray-500 rounded-full px-4 py-2.5 text-sm outline-none border border-goldBorder focus:border-[#C29F74] transition-colors"
           />
-          <button onClick={sendMessage} className="bg-primary text-primary-foreground p-2.5 rounded-full hover:opacity-90">
+          <button
+            onClick={sendMessage}
+            className="w-10 h-10 flex items-center justify-center rounded-full btn-gold"
+          >
             <Send className="h-4 w-4" />
           </button>
         </div>
@@ -136,45 +127,45 @@ const Service = () => {
   }
 
   return (
-    <div className="min-h-screen pb-20 bg-background">
+    <div className="min-h-screen pb-20 bg-goldBg">
       <PageHeader title="Customer Service" showBack={false} />
-      <div className="px-5 pt-2 text-center">
-        <p className="text-xs text-muted-foreground">Online customer service time 07:00-23:00 ( UK )</p>
+      <div className="px-5 pt-3 text-center">
+        <p className="text-xs text-gray-400">Online customer service time 07:00-23:00 ( UK )</p>
       </div>
       <div className="flex justify-center px-8 py-6 relative">
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
+          <div className="h-48 w-48 rounded-full bg-luxuryGold-main/8 blur-3xl" />
         </div>
         <img src={customerServiceImg} alt="Customer Service" className="relative w-64 h-auto" />
       </div>
       <div className="px-5 space-y-3">
         <button
           onClick={() => setShowChat(true)}
-          className="w-full bg-card border border-border rounded-2xl px-4 py-4 flex items-center justify-between shadow-[var(--shadow-tile)] hover:border-primary/40 transition-all"
+          className="w-full rounded-2xl px-4 py-4 flex items-center justify-between transition-all duration-300 luxury-card"
         >
           <div className="flex items-center gap-3">
-            <span className="h-10 w-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center">
-              <MessageCircle className="h-5 w-5 text-accent" strokeWidth={1.6} />
-            </span>
-            <span className="text-sm font-semibold text-foreground">Live Chat Support</span>
+            <div className="gold-icon-3d-sm">
+              <MessageCircle className="h-4 w-4" strokeWidth={1.8} />
+            </div>
+            <span className="text-sm font-semibold text-brandHeading">Live Chat Support</span>
           </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          <ChevronRight className="h-5 w-5 text-gray-500" />
         </button>
         <a
           href={telegramUsername ? `https://t.me/${telegramUsername.replace(/^@/, '')}` : "https://t.me/your_support_bot"}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full bg-card border border-border rounded-2xl px-4 py-4 flex items-center justify-between shadow-[var(--shadow-tile)] hover:border-primary/40 transition-all"
+          className="w-full rounded-2xl px-4 py-4 flex items-center justify-between transition-all duration-300 luxury-card"
         >
           <div className="flex items-center gap-3">
-            <span className="h-10 w-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center">
-              <svg className="h-5 w-5 text-accent" viewBox="0 0 24 24" fill="currentColor">
+            <div className="gold-icon-3d-sm">
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
               </svg>
-            </span>
-            <span className="text-sm font-semibold text-foreground">Telegram Support</span>
+            </div>
+            <span className="text-sm font-semibold text-brandHeading">Telegram Support</span>
           </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          <ChevronRight className="h-5 w-5 text-gray-500" />
         </a>
       </div>
       <BottomNav />
