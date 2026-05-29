@@ -74,6 +74,7 @@ const Mine = () => {
   const [inviteOpen, setInviteOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
 
   const handleLogout = async () => {
     setSigningOut(true);
@@ -102,6 +103,8 @@ const Mine = () => {
         }
       } catch (err: any) {
         toast.error(err.message || "Failed to load profile data.");
+      } finally {
+        setProfileLoading(false);
       }
     };
     fetchProfile();
@@ -122,7 +125,7 @@ const Mine = () => {
     }
     setUploading(true);
     try {
-      toast.warn("Feature temporarily disabled.");
+      toast.warning("Feature temporarily disabled.");
     } catch (err: any) {
       toast.error(err.message || "Upload failed");
     } finally {
@@ -156,103 +159,133 @@ const Mine = () => {
 
   return (
     <div className="min-h-screen pb-24 bg-goldBg">
-      {/* ── Profile Header Section ── */}
-      <div className="relative w-full px-4 pt-4 pb-2 mb-1 text-white overflow-hidden">
-        <div className="pointer-events-none absolute -top-10 left-0 h-44 w-44 rounded-full bg-luxuryGold-main/8 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-6 right-0 h-36 w-36 rounded-full bg-luxuryGold-main/6 blur-3xl" />
+      {/* ── Frosted glass header with grid pattern ── */}
+      <div
+        className="relative px-5 pb-14 pt-8 text-white rounded-b-[28px] overflow-hidden"
+        style={{ background: 'linear-gradient(160deg, #111620 0%, #0a0d14 100%)' }}
+      >
+        {/* Ambient glow blobs */}
+        <div className="pointer-events-none absolute -top-16 -left-12 h-56 w-56 rounded-full bg-luxuryGold-main/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-10 right-0 h-48 w-48 rounded-full bg-luxuryGold-main/8 blur-3xl" />
 
-        {/* Profile Row */}
-        <div className="relative flex items-center gap-3.5">
-          <button
-            onClick={handleAvatarClick}
-            disabled={uploading}
-            className="relative shrink-0 h-[68px] w-[68px] rounded-full overflow-hidden bg-[#171512]/80 backdrop-blur-md border-2 border-luxuryGold-main shadow-[0_4px_15px_0_rgba(0,0,0,0.35),_inset_0_0_12px_rgba(194,159,116,0.05),_0_0_10px_rgba(194,159,116,0.5)]"
-            aria-label="Change profile picture"
-          >
-            <Avatar className="h-[68px] w-[68px]">
-              <AvatarImage src={profile?.avatar_url ?? undefined} alt={username} className="object-cover" />
-              <AvatarFallback className="bg-gradient-to-br from-[#F0A500] via-[#A67C00] to-[#5C3D00] text-black/80 text-lg font-bold">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            <span className="absolute bottom-0 right-0 left-0 bg-black/60 backdrop-blur-sm flex items-center justify-center py-0.5">
-              <Camera className="h-3 w-3 text-white" />
-            </span>
-          </button>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="font-sans font-bold tracking-wide truncate max-w-[160px] text-xl gold-gradient-text">
-                {username}
-              </h1>
-              <Badge className="border-none font-bold text-[11px] px-2 py-0 shadow-lg shadow-amber-500/20" style={{ background: 'linear-gradient(to right, #BF953F, #FCF6BA, #B38728)', color: '#000000' }}>
-                VIP {profile?.vip_level ?? 1}
-              </Badge>
+        {/* 3D Grid Pattern Overlay */}
+        <svg className="pointer-events-none absolute inset-0 h-full w-full text-luxuryGold-main opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid-mine" width="36" height="36" patternUnits="userSpaceOnUse">
+              <path d="M0 36 L36 0 M-9 9 L9 -9 M27 45 L45 27" stroke="currentColor" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-mine)" />
+        </svg>
+
+        {/* ── Profile Row ── */}
+        {profileLoading ? (
+          <div className="relative flex items-center gap-4">
+            <div className="h-16 w-16 rounded-full bg-[#1a1f2e] animate-pulse shrink-0" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-[#1a1f2e] rounded animate-pulse w-1/3" />
+              <div className="h-3 bg-[#1a1f2e] rounded animate-pulse w-1/2" />
             </div>
-            <button onClick={() => copy(inviteCode, "Invitation code")} className="mt-1 flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
-              <span>Invitation code: {inviteCode}</span>
-              <Copy className="h-3 w-3" />
+          </div>
+        ) : (
+          <div className="relative flex items-center gap-4">
+            <button
+              onClick={handleAvatarClick}
+              disabled={uploading}
+              className="relative h-16 w-16 rounded-full overflow-hidden ring-2 ring-luxuryGold-main shadow-[0_0_18px_-4px_rgba(194,159,116,0.5)] disabled:opacity-60 shrink-0"
+              aria-label="Change profile picture"
+            >
+              <Avatar className="h-16 w-16">
+                <AvatarImage src={profile?.avatar_url ?? undefined} alt={username} className="object-cover" />
+                <AvatarFallback className="bg-gradient-to-br from-[#F0A500] via-[#A67C00] to-[#5C3D00] text-black/80 text-lg font-bold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <span className="absolute bottom-0 right-0 left-0 bg-black/60 backdrop-blur-sm flex items-center justify-center py-0.5">
+                <Camera className="h-3 w-3 text-white" />
+              </span>
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h1 className="font-sans font-bold tracking-wide truncate max-w-[140px] text-xl gold-gradient-text">
+                  {username}
+                </h1>
+                <Badge className="border-none font-bold text-[10px] px-2 py-0.5 shadow-lg shadow-amber-500/20" style={{ background: 'linear-gradient(to right, #BF953F, #FCF6BA, #B38728)', color: '#000000' }}>
+                  VIP {profile?.vip_level ?? 1}
+                </Badge>
+              </div>
+              <button onClick={() => copy(inviteCode, "Invitation code")} className="mt-1 flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
+                <span>Invitation code: {inviteCode}</span>
+                <Copy className="h-3 w-3" />
+              </button>
+            </div>
+            {/* Messages bell icon */}
+            <button className="text-goldPrimary hover:opacity-80 transition shrink-0" aria-label="Messages">
+              <Mail className="h-5 w-5" strokeWidth={1.7} />
+            </button>
+          </div>
+        )}
+
+        {/* ── Balance Card with 3D gold icons ── */}
+        <div className="relative mt-7 rounded-2xl p-4 flex items-end justify-between"
+          style={{ background: 'linear-gradient(180deg, rgba(10,13,20,0.75), rgba(10,13,20,0.55))', backdropFilter: 'blur(18px) saturate(140%)', WebkitBackdropFilter: 'blur(18px) saturate(140%)', border: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <div className="shrink-0">
+            <p className="text-[10px] uppercase tracking-[0.22em] font-semibold text-white/90">My Account Balance</p>
+            <p className="mt-1 flex items-baseline gap-1">
+              <span className="gold-gradient-text text-3xl font-extrabold">
+                {balance.toFixed(2)}
+              </span>
+              <span className="text-[11px] font-medium text-white/90">USDT</span>
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => navigate("/deposit")} className="flex flex-col items-center gap-1.5 group">
+              <div className="gold-icon-3d">
+                <svg viewBox="0 0 24 24" className="h-5 w-5">
+                  <rect x="2" y="7" width="20" height="13" rx="3" fill="currentColor" opacity="0.3" />
+                  <rect x="2" y="5" width="14" height="4" rx="2" fill="currentColor" opacity="0.9" />
+                  <circle cx="17" cy="13" r="2" fill="currentColor" />
+                </svg>
+              </div>
+              <span className="text-[10.5px] text-white/90 font-medium leading-tight">Deposit</span>
+            </button>
+            <button onClick={() => navigate("/withdrawal")} className="flex flex-col items-center gap-1.5 group">
+              <div className="gold-icon-3d">
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="13" rx="3" fill="currentColor" opacity="0.25" stroke="none" />
+                  <path d="M12 9 v7 m-3 -3 l3 3 l3 -3" />
+                </svg>
+              </div>
+              <span className="text-[10.5px] text-white/90 font-medium leading-tight">Withdrawal</span>
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Balance Card */}
-        <div className="relative mt-2 rounded-2xl p-3 overflow-hidden transition-all duration-300 luxury-card">
-          <div className="flex items-end justify-between gap-3">
-            <div className="shrink-0">
-              <p className="text-[10px] uppercase tracking-[0.22em] font-semibold text-white/90">My Account Balance</p>
-              <p className="mt-1 flex items-baseline gap-1">
-                <span className="gold-gradient-text text-2xl font-semibold">
-                  {balance.toFixed(2)}
-                </span>
-                <span className="text-[11px] font-medium text-white/90">USDT</span>
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <button onClick={() => navigate("/deposit")} className="flex flex-col items-center gap-1.5 group">
-                <div className="gold-icon-3d-sm">
-                  <svg viewBox="0 0 24 24" className="h-5 w-5">
-                    <rect x="2" y="7" width="20" height="13" rx="3" fill="currentColor" opacity="0.3" />
-                    <rect x="2" y="5" width="14" height="4" rx="2" fill="currentColor" opacity="0.9" />
-                    <circle cx="17" cy="13" r="2" fill="currentColor" />
-                  </svg>
-                </div>
-                <span className="text-[10.5px] text-white/90 font-medium leading-tight">Deposit</span>
-              </button>
-              <button onClick={() => navigate("/withdrawal")} className="flex flex-col items-center gap-1.5 group">
-                <div className="gold-icon-3d-sm">
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="7" width="20" height="13" rx="3" fill="currentColor" opacity="0.25" stroke="none" />
-                    <path d="M12 9 v7 m-3 -3 l3 3 l3 -3" />
-                  </svg>
-                </div>
-                <span className="text-[10.5px] text-white/90 font-medium leading-tight">Withdrawal</span>
-              </button>
-            </div>
-          </div>
+      {/* ── Quick Actions (overlapping the header) ── */}
+      <div className="px-5 -mt-7 relative z-10">
+        <div className="grid grid-cols-4 gap-2.5">
+          {quickActions.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => handleQuickAction(item.action)}
+              className="flex flex-col items-center justify-center gap-2 rounded-xl p-2.5 transition-all duration-300 luxury-card"
+            >
+              <div className="gold-icon-3d-sm">
+                <item.icon className="h-4 w-4" strokeWidth={2} />
+              </div>
+              <span className="text-[10px] text-brandHeading font-medium leading-tight text-center whitespace-pre-line">
+                {item.label}
+              </span>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* ── Quick Actions ── */}
-      <div className="grid grid-cols-4 gap-2.5 px-4 -mt-1 mb-3">
-        {quickActions.map((item) => (
-          <button
-            key={item.label}
-            onClick={() => handleQuickAction(item.action)}
-            className="flex flex-col items-center justify-center gap-2 rounded-xl p-2.5 transition-all duration-300 luxury-card"
-          >
-            <div className="gold-icon-3d-sm">
-              <item.icon className="h-4 w-4" strokeWidth={2} />
-            </div>
-            <span className="text-[10px] text-brandHeading font-medium leading-tight text-center whitespace-pre-line">
-              {item.label}
-            </span>
-          </button>
-        ))}
-      </div>
-
       {/* ── Menu List ── */}
-      <div className="px-4 space-y-2.5">
+      <div className="mt-5 px-5 space-y-2.5">
         {menuItems.map((item) => (
           <button
             key={item.label}
@@ -264,7 +297,7 @@ const Mine = () => {
               else if (item.action === "withdrawal-records") navigate("/withdrawal-records");
               else if (item.action === "settings") navigate("/settings");
             }}
-            className="flex w-full items-center gap-3 rounded-2xl p-4 transition-all duration-300 luxury-card"
+            className="flex w-full items-center gap-3 rounded-2xl p-4 transition-all duration-300 luxury-card hover:translate-x-0.5"
           >
             <div className="gold-icon-3d-sm">
               <item.icon className={`h-4 w-4 ${item.danger ? 'text-red-400' : ''}`} strokeWidth={1.8} />
@@ -279,7 +312,7 @@ const Mine = () => {
         {/* Logout Button */}
         <button
           onClick={() => setLogoutOpen(true)}
-          className="flex w-full items-center gap-3 rounded-2xl p-4 transition-all duration-300 luxury-card"
+          className="flex w-full items-center gap-3 rounded-2xl p-4 transition-all duration-300 luxury-card hover:translate-x-0.5"
         >
           <div className="gold-icon-3d-sm" style={{ color: '#EF4444' }}>
             <LogOut className="h-4 w-4" strokeWidth={1.8} />
